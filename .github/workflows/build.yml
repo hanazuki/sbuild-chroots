@@ -1,0 +1,47 @@
+name: Build
+
+on: [push]
+
+jobs:
+  create-chroot:
+    runs-on: ubuntu-18.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - debian-unstable
+          - debian-buster
+          # - debian-stretch
+          - ubuntu-eoan
+          - ubuntu-bionic
+        arch:
+          - amd64
+          - arm64
+        exclude:
+          - os: ubuntu-eoan
+            arch: arm64
+          - os: ubuntu-bionic
+            arch: arm64
+    steps:
+    - uses: actions/checkout@v1
+    - name: Prepare
+      run: |
+        sudo apt-get update -qq
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends sbuild schroot debootstrap ubuntu-keyring debian-archive-keyring qemu-user-static binfmt-support
+    - name: Build
+      env:
+        BUILD_OS: ${{matrix.os}}
+        BUILD_ARCH: ${{matrix.arch}}
+      run: bash ./create-chroot.sh
+    # - name: Configure AWS Credentials
+    #   uses: aws-actions/configure-aws-credentials@v1
+    #   with:
+    #     aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+    #     aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+    #     aws-region: us-east-2
+    # - name: Upload
+    #   env:
+    #     BUILD_OS: ${{matrix.os}}
+    #     BUILD_ARCH: ${{matrix.arch}}
+    #   run: aws s3 cp "${BUILD_OS}-${BUILD_ARCH}-sbuild.tar.gz" s3://exapico-sbuild

@@ -18,13 +18,13 @@ jobs:
           - debian-unstable
           - debian-buster
           # - debian-stretch
-          - ubuntu-eoan
+          - ubuntu-focal
           - ubuntu-bionic
         arch:
           - amd64
           - arm64
         exclude:
-          - os: ubuntu-eoan
+          - os: ubuntu-focal
             arch: arm64
           - os: ubuntu-bionic
             arch: arm64

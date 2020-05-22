@@ -6,6 +6,7 @@ BUILD_DIST=${BUILD_OS#*-}
 DEBIAN_MIRROR=http://deb.debian.org/debian
 SECDEB_MIRROR=http://deb.debian.org/debian-security
 UBUNTU_MIRROR=http://azure.archive.ubuntu.com/ubuntu
+UBUNTU_PORTS_MIRROR=http://ports.ubuntu.com/ubuntu-ports
 
 EXTRA_PACKAGES=eatmydata,ccache,gnupg
 
@@ -17,18 +18,24 @@ args=(--verbose --arch="${BUILD_ARCH}" --debootstrap=qemu-debootstrap --include=
 
 case "$BUILD_OS" in
   debian-*)
+    mirror=$DEBIAN_MIRROR
     if [[ $BUILD_DIST == unstable ]]; then
       args+=(--alias="UNRELEASED-${BUILD_ARCH}-sbuild")
     else
       args+=(--extra-repository="deb $DEBIAN_MIRROR ${BUILD_DIST}-updates main" --extra-repository="deb $SECDEB_MIRROR ${BUILD_DIST}/updates main")
     fi
-    mirror=$DEBIAN_MIRROR
     ;;
 
   ubuntu-*)
+    case "${BUILD_ARCH}" in
+      i386|amd64)
+        mirror=$UBUNTU_MIRROR;;
+      *)
+        mirror=$UBUNTU_PORTS_MIRROR;;
+    esac
+
     sudo ln -s gutsy "/usr/share/debootstrap/scripts/${BUILD_DIST}" || :
-    args+=(--components=main,universe --extra-repository="deb $UBUNTU_MIRROR ${BUILD_DIST}-updates main universe" --extra-repository="deb $UBUNTU_MIRROR ${BUILD_DIST}-security main universe")
-    mirror=$UBUNTU_MIRROR
+    args+=(--components=main,universe --extra-repository="deb $mirror ${BUILD_DIST}-updates main universe" --extra-repository="deb $mirror ${BUILD_DIST}-security main universe")
     ;;
 
   *)

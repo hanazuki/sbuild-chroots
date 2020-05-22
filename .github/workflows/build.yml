@@ -23,11 +23,6 @@ jobs:
         arch:
           - amd64
           - arm64
-        exclude:
-          - os: ubuntu-focal
-            arch: arm64
-          - os: ubuntu-bionic
-            arch: arm64
     steps:
     - uses: actions/checkout@v1
     - name: Prepare

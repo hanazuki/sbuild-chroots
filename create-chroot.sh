@@ -46,3 +46,5 @@ esac
 
 sudo sbuild-createchroot "${args[@]}"  "${BUILD_DIST}" "${chroot_path}" "$mirror"
 stat "$tarball"
+
+echo "::set-output name=artifact_path::${tarball}"

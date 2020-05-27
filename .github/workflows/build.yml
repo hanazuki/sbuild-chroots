@@ -29,7 +29,8 @@ jobs:
       run: |
         sudo apt-get update -qq
         sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends sbuild schroot debootstrap ubuntu-keyring debian-archive-keyring qemu-user-static binfmt-support
-    - name: Build
+    - id: build
+      name: Build
       env:
         BUILD_OS: ${{matrix.os}}
         BUILD_ARCH: ${{matrix.arch}}
@@ -42,6 +43,5 @@ jobs:
         aws-region: us-east-2
     - name: Upload
       env:
-        BUILD_OS: ${{matrix.os}}
-        BUILD_ARCH: ${{matrix.arch}}
-      run: aws s3 cp "${BUILD_OS}-${BUILD_ARCH}-sbuild.tar.gz" s3://exapico-sbuild
+        ARTIFACT: ${{steps.build.outputs.artifact_path}}
+      run: aws s3 cp "$ARTIFACT" s3://exapico-sbuild/

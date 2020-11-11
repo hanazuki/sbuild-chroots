@@ -18,6 +18,7 @@ jobs:
           - debian-unstable
           - debian-buster
           # - debian-stretch
+          - ubuntu-groovy
           - ubuntu-focal
           - ubuntu-bionic
         arch:

@@ -24,6 +24,7 @@ jobs:
         arch:
           - amd64
           - arm64
+          - armhf
     steps:
     - uses: actions/checkout@v2
     - name: Prepare

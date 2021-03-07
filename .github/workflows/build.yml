@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - '*'
   schedule:
     - cron: '0 0 * * Sun'
 
@@ -27,6 +27,21 @@ jobs:
           - armhf
     steps:
     - uses: actions/checkout@v2
+    - name: Backport
+      run: |
+        sudo tee /etc/apt/sources.list.d/hirsute.list <<EOF
+        deb http://azure.archive.ubuntu.com/ubuntu hirsute main universe
+        EOF
+
+        sudo tee /etc/apt/preferences.d/hirsute.pref <<EOF
+        Package: *
+        Pin: release a=hirsute
+        Pin-Priority: 100
+
+        Package: qemu-*
+        Pin: release a=hirsute
+        Pin-Priority: 600
+        EOF
     - name: Prepare
       run: |
         sudo apt-get update -qq
@@ -38,12 +53,14 @@ jobs:
         BUILD_ARCH: ${{matrix.arch}}
       run: bash ./create-chroot.sh
     - name: Configure AWS Credentials
+      if: github.ref == 'refs/heads/master'
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
         aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
         aws-region: us-east-2
     - name: Upload
+      if: github.ref == 'refs/heads/master'
       env:
         ARTIFACT: ${{steps.build.outputs.artifact_path}}
       run: aws s3 cp "$ARTIFACT" s3://exapico-sbuild/

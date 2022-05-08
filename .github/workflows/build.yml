@@ -16,11 +16,10 @@ jobs:
       matrix:
         os:
           - debian-unstable
+          - debian-bullseye
           - debian-buster
-          # - debian-stretch
           - ubuntu-jammy
           - ubuntu-focal
-          - ubuntu-bionic
         arch:
           - amd64
           - arm64

@@ -9,7 +9,7 @@ on:
 
 jobs:
   create-chroot:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     strategy:
       fail-fast: false
@@ -26,21 +26,6 @@ jobs:
           - armhf
     steps:
     - uses: actions/checkout@v2
-    - name: Backport
-      run: |
-        sudo tee /etc/apt/sources.list.d/hirsute.list <<EOF
-        deb http://azure.archive.ubuntu.com/ubuntu hirsute main universe
-        EOF
-
-        sudo tee /etc/apt/preferences.d/hirsute.pref <<EOF
-        Package: *
-        Pin: release a=hirsute
-        Pin-Priority: 100
-
-        Package: qemu-*
-        Pin: release a=hirsute
-        Pin-Priority: 600
-        EOF
     - name: Prepare
       run: |
         sudo apt-get update -qq

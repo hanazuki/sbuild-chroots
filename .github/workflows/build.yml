@@ -16,14 +16,13 @@ jobs:
       matrix:
         os:
           - debian-unstable
+          - debian-bookworm
           - debian-bullseye
-          - debian-buster
           - ubuntu-jammy
           - ubuntu-focal
         arch:
           - amd64
           - arm64
-          - armhf
     steps:
     - uses: actions/checkout@v2
     - name: Prepare
